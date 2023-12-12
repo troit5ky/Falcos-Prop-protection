@@ -1,11 +1,25 @@
 FPP = FPP or {}
 
+local ScreenScale = ScreenScale
+local tostring = tostring
+local table_ToString = table.ToString
+local math_Round = math.Round
+local string_format = string.format
+
 surface.CreateFont("TabLarge", {
     size = 17,
     weight = 700,
     antialias = true,
     shadow = false,
     font = "Trebuchet MS"})
+
+surface.CreateFont("FPP::Info-Font", {
+        size = ScreenScale(8),
+        weight = 700,
+        antialias = true,
+        shadow = false,
+        font = "Trebuchet MS"})
+    
 
 hook.Add("CanTool", "FPP_CL_CanTool", function(ply, trace, tool) -- Prevent client from SEEING his toolgun shoot while it doesn't shoot serverside.
     if IsValid(trace.Entity) and not FPP.canTouchEnt(trace.Entity, "Toolgun") then
@@ -36,6 +50,8 @@ local surface_SetDrawColor = surface.SetDrawColor
 local draw_SimpleText = draw.SimpleText
 local draw_DrawText = draw.DrawText
 local draw_RoundedBox = draw.RoundedBox
+
+local padding = ScreenScale(2)
 
 local HUDNote_c = 0
 local HUDNote_i = 1
@@ -164,9 +180,9 @@ local function FilterEntityTable(eyepos, t)
     return filtered
 end
 
-local boxBackground = Color(0, 0, 0, 110)
-local canTouchTextColor = Color(0, 255, 0, 255)
-local cannotTouchTextColor = Color(255, 0, 0, 255)
+local boxBackground = Color(0, 0, 0, 128)
+local canTouchTextColor = Color(232, 232, 232, 255)
+local cannotTouchTextColor = Color(232, 96, 96, 255)
 local function HUDPaint()
     local i = 0
     for k, v in pairs(HUDNotes) do
@@ -207,15 +223,27 @@ local function HUDPaint()
     if not reason then return end
     local originalOwner = LAEnt:GetNW2String("FPP_OriginalOwner")
     originalOwner = originalOwner ~= "" and (" (previous owner: %s)"):format(originalOwner) or ""
-    reason = reason .. originalOwner
+    reason = 'Owner: ' .. reason .. originalOwner
 
-    surface_SetFont("Default")
+    if FPP.getPrivateSetting("SimpleInf") then  
+        
+        local ang = LAEnt:GetAngles()
+        local ang = string_format('%s, %s, %s', math_Round( ang[1] ), math_Round( ang[2] ), math_Round( ang[3] ))
+        local pos = LAEnt:GetPos()
+        local pos = string_format('%s, %s, %s', math_Round( pos.x ), math_Round( pos.y ), math_Round( pos.z ))
+
+
+        reason = reason .. '\n' .. tostring(LAEnt) .. '\nModel: ' .. LAEnt:GetModel() .. '\nAngle: ' .. ang .. '\nPos: ' .. pos
+    
+    end
+
+    surface_SetFont('FPP::Info-Font')
     local w,h = surface_GetTextSize(reason)
     local col = FPP.canTouchEnt(LAEnt, touchType) and canTouchTextColor or cannotTouchTextColor
     local scrH = ScrH()
 
-    draw_RoundedBox(4, 0, scrH / 2 - h - 2, w + 10, 20, boxBackground)
-    draw_DrawText(reason, "Default", 5, scrH / 2 - h, col, 0)
+    draw_RoundedBox(padding, 0, (scrH / 2) - (h / 2) , w + padding * 2, h + padding, boxBackground)
+    draw_DrawText(reason, "FPP::Info-Font", padding, (scrH / 2) - ( h / 2 ) + padding * .3, col, 0)
     surface_SetDrawColor(255, 255, 255, 255)
 end
 hook.Add("HUDPaint", "FPP_HUDPaint", HUDPaint)

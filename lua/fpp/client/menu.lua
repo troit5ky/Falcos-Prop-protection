@@ -1084,7 +1084,8 @@ local PrivateSettings = {
     ["touch world entities"] = "WorldProps",
     ["touch other people's entities"] = "OtherPlayerProps",
     ["touch blocked entities"] = "BlockedProps",
-    ["see the owners of props"] = "HideOwner"
+    ["see the owners of props"] = "HideOwner",
+    ["see the simple info of props"] = "SimpleInf"
 }
 
 local privateSettingVars = {}
