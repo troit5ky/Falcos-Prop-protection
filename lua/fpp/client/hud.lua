@@ -14,11 +14,11 @@ surface.CreateFont("TabLarge", {
     font = "Trebuchet MS"})
 
 surface.CreateFont("FPP::Info-Font", {
-        size = ScreenScale(8),
-        weight = 700,
+        size = ScreenScale(6.25),
+        weight = 500,
         antialias = true,
         shadow = false,
-        font = "Trebuchet MS"})
+        font = "Roboto Bold"})
     
 
 hook.Add("CanTool", "FPP_CL_CanTool", function(ply, trace, tool) -- Prevent client from SEEING his toolgun shoot while it doesn't shoot serverside.
